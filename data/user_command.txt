@@ -1,0 +1,9 @@
+ABDC
+BAD
+CABD
+CDAB
+DA
+DB
+BAC
+CBAD
+tally
