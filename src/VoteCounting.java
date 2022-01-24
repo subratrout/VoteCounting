@@ -21,8 +21,6 @@ public class VoteCounting {
         System.out.println(allBallots);
         allBallots.stream().forEach(ballot -> {
             Integer minValAmongPreferences = ballot.values().stream().min(Comparator.comparingInt(Integer::intValue)).get();
-//            String optionText = ballot.entrySet().stream().filter(e-> e.getValue().equals(minValAmongPreferences))
-//                    .map(e-> e.getKey()).findFirst().get();
             String optionText = null;
             for(Map.Entry<String, Integer> entry : ballot.entrySet()){
                 if(entry.getValue().equals(minValAmongPreferences)){
@@ -36,6 +34,10 @@ public class VoteCounting {
             preferenceVsBallots.get(optionText).add(ballot);
         });
 
+        votingCountRoundEvaluationBasedOnPref(preferenceVsBallots);
+    }
+
+    private static void votingCountRoundEvaluationBasedOnPref(Map<String, List<Map<String, Integer>>> preferenceVsBallots){
         System.out.println("=========Printing our preferenceVsBallots =======");
         preferenceVsBallots.entrySet().stream().forEach(e->{
             System.out.println("Preference category: " + e.getKey());
