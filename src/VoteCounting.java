@@ -7,21 +7,16 @@ import java.util.stream.Collectors;
 
 public class VoteCounting {
     public static void main(String[] args) throws IOException {
-        List<String> lines = Files.readAllLines(Path.of("data" + File.separator + "input.txt"))
-                .stream()
-                .filter(Objects::nonNull)
-                .filter(s -> !s.isBlank())
-                .distinct()
-                .collect(Collectors.toList());
-        System.out.println(lines);
-        Map<Character, String> optionNumberVsOptionText = new LinkedHashMap<>();
-        for (int i = 0; i < lines.size(); i++) {
-            String optionText = lines.get(i);
-            Character optionNumber = (char) (i + 65);
-            optionNumberVsOptionText.put(optionNumber, optionText);
-            System.out.println(optionNumber + " " + optionText);
+        try {
+            List<String> lines = readAllOption();
+            Map<Character, String> optionNumberVsOptionText = optionNumberVsOptionText(lines);
+            readUserCommand(optionNumberVsOptionText);
+        }catch (Exception e){
+            e.printStackTrace();
         }
+    }
 
+    private static String readUserCommand(Map<Character, String> optionNumberVsOptionText){
         Scanner scanner = new Scanner(System.in);
         String userCommand;
         List<Map <String, Integer>> allVotes = new LinkedList<>();
@@ -30,7 +25,6 @@ public class VoteCounting {
             userCommand = scanner.next();
             if(userCommand.equals("tally")) {
                 //calculateVoteCount();
-
             }else {
                 //ABDC
                 char[] choices = userCommand.trim().toCharArray();
@@ -39,7 +33,7 @@ public class VoteCounting {
                     Character choice = choices[i];
                     if(!optionNumberVsOptionText.containsKey(choice)){
                         System.out.println("Please enter the valid choices, invalid option="+choice);
-                        return;
+                        return null;
                     }
                     String optionText = optionNumberVsOptionText.get(choice);
                     ballot.put(optionText, i+1);
@@ -47,6 +41,27 @@ public class VoteCounting {
                 allVotes.add(ballot);
             }
         }while(!userCommand.equals("tally"));
+        return userCommand;
+    }
 
+    private static List<String> readAllOption() throws IOException {
+        List<String> lines = Files.readAllLines(Path.of("data" + File.separator + "input.txt"))
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(s->!s.isBlank())
+                .distinct()
+                .collect(Collectors.toList());
+        return lines;
+    }
+
+    private static Map<Character, String> optionNumberVsOptionText(List<String> lines) {
+        Map<Character, String> optionNumberVsOptionText = new LinkedHashMap<>();
+        for (int i = 0; i < lines.size(); i++) {
+            String optionText = lines.get(i);
+            Character optionNumber = (char) (i + 65);
+            optionNumberVsOptionText.put(optionNumber, optionText);
+            System.out.println(optionNumber + " " + optionText);
+        }
+        return optionNumberVsOptionText;
     }
 }
