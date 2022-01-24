@@ -16,22 +16,49 @@ public class VoteCounting {
         }
     }
 
+    private static void calculateVoteCount(List<Map<String, Integer>> allBallots){
+        Map<String, List<Map<String, Integer>>> preferenceVsBallots = new LinkedHashMap<>();
+        System.out.println(allBallots);
+        allBallots.stream().forEach(ballot -> {
+            Integer minValAmongPreferences = ballot.values().stream().min(Comparator.comparingInt(Integer::intValue)).get();
+//            String optionText = ballot.entrySet().stream().filter(e-> e.getValue().equals(minValAmongPreferences))
+//                    .map(e-> e.getKey()).findFirst().get();
+            String optionText = null;
+            for(Map.Entry<String, Integer> entry : ballot.entrySet()){
+                if(entry.getValue().equals(minValAmongPreferences)){
+                    optionText = entry.getKey();
+                    break;
+                }
+            }
+            if(!preferenceVsBallots.containsKey(optionText)){
+                preferenceVsBallots.put(optionText, new LinkedList<>());
+            }
+            preferenceVsBallots.get(optionText).add(ballot);
+        });
+
+        System.out.println("=========Printing our preferenceVsBallots =======");
+        preferenceVsBallots.entrySet().stream().forEach(e->{
+            System.out.println("Preference category: " + e.getKey());
+            e.getValue().stream().forEach(System.out::println);
+        });
+    }
+
     private static String readUserCommand(Map<Character, String> optionNumberVsOptionText){
         Scanner scanner = new Scanner(System.in);
         String userCommand;
-        List<Map <String, Integer>> allBallots = new LinkedList<>();
+        List<Map<String, Integer>> allBallots = new LinkedList<>();
         do {
             optionNumberVsOptionText.entrySet().stream().forEach(e->System.out.println(e.getKey() + "."+ e.getValue()));
             System.out.println("Enter your vote in a single line only (or \"tally\" to calculate):");
             userCommand = scanner.next();
             if(userCommand.equals("tally")) {
-                //calculateVoteCount();
+                calculateVoteCount(allBallots);
             }else {
                 //ABDC
                List<Map<String, Integer>> userBallots = processUserCommand(userCommand, optionNumberVsOptionText);
                if (null != userBallots){
                    allBallots.addAll(userBallots);
-                   System.out.println(allBallots);
+//                   System.out.println(allBallots);
                }
             }
         }while(!userCommand.equals("tally"));
@@ -52,7 +79,6 @@ public class VoteCounting {
             ballot.put(optionText, i + 1);
         }
         ballots.add(ballot);
-        System.out.println(ballot);
 
         return ballots;
     }
