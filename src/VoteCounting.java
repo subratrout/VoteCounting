@@ -19,29 +19,42 @@ public class VoteCounting {
     private static String readUserCommand(Map<Character, String> optionNumberVsOptionText){
         Scanner scanner = new Scanner(System.in);
         String userCommand;
-        List<Map <String, Integer>> allVotes = new LinkedList<>();
+        List<Map <String, Integer>> allBallots = new LinkedList<>();
         do {
-            System.out.println("Enter your vote (or \"tally\" to calculate):");
+            optionNumberVsOptionText.entrySet().stream().forEach(e->System.out.println(e.getKey() + "."+ e.getValue()));
+            System.out.println("Enter your vote in a single line only (or \"tally\" to calculate):");
             userCommand = scanner.next();
             if(userCommand.equals("tally")) {
                 //calculateVoteCount();
             }else {
                 //ABDC
-                char[] choices = userCommand.trim().toCharArray();
-                Map<String, Integer> ballot = new LinkedHashMap<>();
-                for(int i=0; i<choices.length; i++){
-                    Character choice = choices[i];
-                    if(!optionNumberVsOptionText.containsKey(choice)){
-                        System.out.println("Please enter the valid choices, invalid option="+choice);
-                        return null;
-                    }
-                    String optionText = optionNumberVsOptionText.get(choice);
-                    ballot.put(optionText, i+1);
-                }
-                allVotes.add(ballot);
+               List<Map<String, Integer>> userBallots = processUserCommand(userCommand, optionNumberVsOptionText);
+               if (null != userBallots){
+                   allBallots.addAll(userBallots);
+                   System.out.println(allBallots);
+               }
             }
         }while(!userCommand.equals("tally"));
         return userCommand;
+    }
+
+    private static List<Map<String, Integer>> processUserCommand(String userCommand, Map<Character, String> optionNumberVsOptionText) {
+        List<Map<String, Integer>> ballots = new LinkedList<>();
+        char[] choices = userCommand.trim().toCharArray();
+        Map<String, Integer> ballot = new LinkedHashMap<>();
+        for(int i=0 ; i < choices.length; i++){
+            Character choice = choices[i];
+            if(!optionNumberVsOptionText.containsKey(choice)){
+                System.out.println("Please enter for valid choices, invalid option= " + choice);
+                return null;
+            }
+            String optionText = optionNumberVsOptionText.get(choice);
+            ballot.put(optionText, i + 1);
+        }
+        ballots.add(ballot);
+        System.out.println(ballot);
+
+        return ballots;
     }
 
     private static List<String> readAllOption() throws IOException {
