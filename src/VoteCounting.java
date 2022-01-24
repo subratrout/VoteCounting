@@ -2,10 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VoteCounting {
@@ -24,6 +21,32 @@ public class VoteCounting {
             optionNumberVsOptionText.put(optionNumber, optionText);
             System.out.println(optionNumber + " " + optionText);
         }
+
+        Scanner scanner = new Scanner(System.in);
+        String userCommand;
+        List<Map <String, Integer>> allVotes = new LinkedList<>();
+        do {
+            System.out.println("Enter your vote (or \"tally\" to calculate):");
+            userCommand = scanner.next();
+            if(userCommand.equals("tally")) {
+                //calculateVoteCount();
+
+            }else {
+                //ABDC
+                char[] choices = userCommand.trim().toCharArray();
+                Map<String, Integer> ballot = new LinkedHashMap<>();
+                for(int i=0; i<choices.length; i++){
+                    Character choice = choices[i];
+                    if(!optionNumberVsOptionText.containsKey(choice)){
+                        System.out.println("Please enter the valid choices, invalid option="+choice);
+                        return;
+                    }
+                    String optionText = optionNumberVsOptionText.get(choice);
+                    ballot.put(optionText, i+1);
+                }
+                allVotes.add(ballot);
+            }
+        }while(!userCommand.equals("tally"));
 
     }
 }
