@@ -34,7 +34,32 @@ public class VoteCounting {
             preferenceVsBallots.get(optionText).add(ballot);
         });
 
+
+    }
+
+    private static boolean isResultAnnounced(Map<String, List<Map<String, Integer>>> preferenceVsBallots){
         votingCountRoundEvaluationBasedOnPref(preferenceVsBallots);
+
+        Integer totalActiveBallots = preferenceVsBallots.values().stream().map(v-> v.size()).collect(Collectors.summingInt(Integer::intValue));
+        System.out.println(totalActiveBallots);
+        int quota = (totalActiveBallots /2) + 1;
+        boolean isResultAnnounced = false;
+
+        while(!isResultAnnounced){
+            for(Map.Entry<String, List<Map<String, Integer>>> entry: preferenceVsBallots.entrySet()){
+                String preferenceCategory = entry.getKey();
+                int size = entry.getValue().size();
+                if(size >= quota){
+                    System.out.println("The winner is: "+ preferenceCategory);
+                    isResultAnnounced = true;
+                    break;
+                }
+            }
+        }
+        if(!isResultAnnounced){
+            isResultAnnounced(preferenceVsBallots);
+        }
+        return isResultAnnounced;
     }
 
     private static void votingCountRoundEvaluationBasedOnPref(Map<String, List<Map<String, Integer>>> preferenceVsBallots){
